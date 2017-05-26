@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Evenly</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="venue_details">Venue Details</string>
+    <string name="title_home">NearBy</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="distance">%1$sm</string>
+    <string name="empty_address">Unknown Address</string>
+    <string name="getdirection">Get directions</string>
+    <string name="mainactivity_error">Problem while loading list of venues, pull to refresh</string>
+    <string name="venueactivity_error">Problem while loading venue information, pull to refresh</string>
+    <string name="like_button">Like venue</string>
+    <string name="dislike_button">Dislike venue</string>
+    <string name="empty_category">No category defined</string>
+    <string name="venueactivity_coordinateerror">Problem loading direction, coordinates are not correct</string>
+    <string name="venueactivity_imageDescription">Venue Images</string>
 </resources>
