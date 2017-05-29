@@ -15,24 +15,25 @@ import rx.subscriptions.CompositeSubscription;
  * Main Presenter Implementation, following MVP architecture;
  */
 
-public class MainPresenterImplementation implements FoursquareService.GetVenuesCallback {
+class MainPresenterImplementation implements FoursquareService.GetVenuesCallback {
 
-    private static final String TAG = "MainPresenterImplementa";
+    //private static final String TAG = "MainPresenterImplementa";
     private final MainView mMainView;
     private final FoursquareService mFoursquareService;
     private CompositeSubscription mSubscription;
 
-    public MainPresenterImplementation(MainView mainView, FoursquareService foursquareService) {
+    MainPresenterImplementation(MainView mainView, FoursquareService foursquareService) {
         mMainView = mainView;
         mFoursquareService = foursquareService;
         mSubscription = new CompositeSubscription();
     }
 
     /**
-     * Calls the APi to get the Venues near the specified location
+     * Calls the API to get the Venues near the specified location
+     *
      * @param location coordinates in String (e.g '52.2,14.1')
      */
-    public void getNearByVenues(String location) {
+    void getNearByVenues(String location) {
         mMainView.showLoading();
         Subscription subscription = mFoursquareService.getNearbyVenues(location, this);
         mSubscription.add(subscription);
@@ -50,6 +51,7 @@ public class MainPresenterImplementation implements FoursquareService.GetVenuesC
 
     /**
      * In case that the API call is successful, it will pass the list of venues to the View.
+     *
      * @param responseInfo Json response converted object.
      */
     @Override
@@ -68,7 +70,7 @@ public class MainPresenterImplementation implements FoursquareService.GetVenuesC
 
     }
 
-    public void unsubscribe() {
+    void unsubscribe() {
         mSubscription.unsubscribe();
     }
 }

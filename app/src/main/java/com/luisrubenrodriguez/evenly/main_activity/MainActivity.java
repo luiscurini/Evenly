@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseApp implements MainView, VenueRecyclerViewAdapter.OnVenueItemClickListener {
 
-    private static final String TAG = "MainActivity";
+    //private static final String TAG = "MainActivity";
     public static final String VENUE_ID = "venue_id";
     public static final String VENUE_DATA = "venue_data";
     public static final String LAYOUT_DATA = "layout_data";
@@ -123,6 +123,7 @@ public class MainActivity extends BaseApp implements MainView, VenueRecyclerView
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mVenueList != null) {
+            //Saving list with venues and RecyclerView's layoutmanager state.
             Parcelable state = mRecyclerViewLayoutManager.onSaveInstanceState();
             outState.putParcelable(LAYOUT_DATA, state);
             outState.putSerializable(VENUE_DATA, (Serializable) mVenueList);

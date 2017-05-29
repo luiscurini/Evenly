@@ -2,6 +2,7 @@ package com.luisrubenrodriguez.evenly.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.List;
 
 public class ImageGalleryAdapter extends PagerAdapter {
 
+    private static final String TAG = "ImageGalleryAdapter";
     private final List<String> mImagesUrl;
     private final LayoutInflater mLayoutInflater;
     private static final String NOIMAGEURL = "http://www.bernunlimited.com/c.4436185/sca-dev-vinson/img/no_image_available.jpeg";
@@ -36,7 +38,7 @@ public class ImageGalleryAdapter extends PagerAdapter {
     /**
      * If no images available the count will return 1 to show a default image.
      *
-     * @return
+     * @return amount of images inside the list. If empty it will return 1.
      */
     @Override
     public int getCount() {
@@ -78,12 +80,10 @@ public class ImageGalleryAdapter extends PagerAdapter {
 
             // Try to clear resources used for displaying this view
             Glide.clear(((View) object).findViewById(R.id.gallery_item));
-            // Remove any resources used by this view
             unbindDrawables((View) object);
-            // Invalidate the object
             object = null;
         } catch (Exception e) {
-
+            Log.d(TAG, "destroyItem: exception");
         }
     }
 
@@ -119,6 +119,7 @@ public class ImageGalleryAdapter extends PagerAdapter {
             Glide.with(galleryView.getContext())
                     .load(url)
                     .fitCenter() // scale type
+                    //This will hide the progress bar.
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {

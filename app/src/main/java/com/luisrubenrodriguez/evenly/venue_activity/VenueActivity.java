@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +63,8 @@ public class VenueActivity extends BaseApp implements VenueView {
     ViewPager mVenueGalleryPager;
     @BindView(R.id.indicator)
     CircleIndicator mCircleIndicator;
+    @BindView(R.id.venuedetail_scrollview)
+    ScrollView mScrollView;
 
     private Venue mVenue;
     private String mVenueId;
@@ -69,6 +73,7 @@ public class VenueActivity extends BaseApp implements VenueView {
     public FoursquareService mFoursquareService;
     private VenuePresenterImplementation mVenuePresenterImplementation;
 
+    //TODO save instance to avoid calling the API when rotation happens for example.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,14 +87,12 @@ public class VenueActivity extends BaseApp implements VenueView {
         mVenuePresenterImplementation = new VenuePresenterImplementation(this, mFoursquareService);
         mVenuePresenterImplementation.getVenue(mVenueId);
 
-
-        int displayWidth = getResources().getDisplayMetrics().heightPixels;
-        mVenueGalleryPager.getLayoutParams().height = displayWidth / 2;
-
+        initViewPager();
         initDirectionButton();
         initLikeButton();
         initSwipeRefresh();
     }
+
 
     @Override
     protected void onPause() {
@@ -97,6 +100,32 @@ public class VenueActivity extends BaseApp implements VenueView {
         mVenuePresenterImplementation.unsubscribe();
     }
 
+    /**
+     * Initializes the ViewPager that will contain the images. As it's inside a ScrollView
+     * once a touch event inside of the ViewPager happens it will disallow the touch event on the
+     * scrollView.
+     */
+    private void initViewPager() {
+        //I want the images to occupy half of the available space.
+        Integer displayWidth = getResources().getDisplayMetrics().heightPixels;
+        mVenueGalleryPager.getLayoutParams().height = displayWidth / 2;
+
+        //This is needed otherwise the image scrolling is a bit weird. This might need some tweaking.
+        mVenueGalleryPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE && mScrollView != null) {
+                    mScrollView.requestDisallowInterceptTouchEvent(true);
+                }
+                return false;
+
+            }
+        });
+    }
+
+    /**
+     * Initializes the Swipe REfresh Layout
+     */
     private void initSwipeRefresh() {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -168,6 +197,7 @@ public class VenueActivity extends BaseApp implements VenueView {
 
     /**
      * Get venue data from the API, shows the data in the widgets.
+     *
      * @param venue data receive
      */
     @Override
@@ -205,16 +235,16 @@ public class VenueActivity extends BaseApp implements VenueView {
         List<String> imagesUrl = new ArrayList<>();
 
 
+        //TODO move this to a getter in the class.
         try {
             VenueGroup photoGroup = mVenue.getPhotos().getGroups().get(0);
             List<VenueGroupItem> photoGroupItem = photoGroup.getItems();
 
             for (VenueGroupItem item : photoGroupItem) {
-                String prefix  = item.getPrefix();
+                String prefix = item.getPrefix();
                 String suffix = item.getSuffix();
-                String url = prefix + "width720" + suffix;
+                String url = prefix + "width960" + suffix;
                 imagesUrl.add(url);
-                Log.d(TAG, "loadData: photoUrl: " + url);
             }
 
         } catch (Exception e) {
